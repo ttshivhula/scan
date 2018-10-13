@@ -17,7 +17,7 @@ void recv_pkt(u_char *args, const struct pcap_pkthdr *header, const u_char *pkt)
 		source.sin_addr.s_addr = iph->saddr;
 		memset(&dest, 0, sizeof(dest));
 		dest.sin_addr.s_addr = iph->daddr;
-		if(tcph->syn == 1 && tcph->ack == 1 /*&& source.sin_addr.s_addr == dest_ip.s_addr */)
+		if(tcph->syn == 1 && tcph->ack == 1)
 		{
 			printf("Port %d open \n" , ntohs(tcph->source));
 		}
