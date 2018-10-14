@@ -1,0 +1,14 @@
+/* UDP PACKETS SHOULD FOLLOW THIS FOMART, Well in theory, i haven't tested
+this but it kinda makes sense */
+
+struct iphdr	*iph;
+	struct udphdr	*udph;
+
+	iph = (struct iphdr *)(buff);
+	udph = (struct udphdr *)(buff + (iph->ihl * 4));
+
+	udph->source = htons((unsigned short)sport);
+	udph->dest = htons(dport);
+	udph->len = htons(sizeof(struct udphdr));
+	udph->check = 0;
+	udph->check = csum((unsigned short *)&udph, iph->ihl * 4);
