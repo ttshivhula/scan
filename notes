@@ -10,13 +10,14 @@ to the dest host and hopefully get
 a reply. Ok fuck me 😏*/
 
 struct iphdr	*iph;
-	struct udphdr	*udph;
+struct udphdr	*udph;
 
-	iph = (struct iphdr *)(buff);
-	udph = (struct udphdr *)(buff + (iph->ihl * 4));
-
-	udph->source = htons((unsigned short)sport);
-	udph->dest = htons(dport);
-	udph->len = htons(sizeof(struct udphdr));
-	udph->check = 0;
-	udph->check = csum((unsigned short *)&udph, iph->ihl * 4);
+iph = (struct iphdr *)(buff);
+udph = (struct udphdr *)(buff +
+	(iph->ihl * 4));
+udph->source = htons((unsigned short)sport);
+udph->dest = htons(dport);
+udph->len = htons(sizeof(struct udphdr));
+udph->check = 0;
+udph->check = csum((unsigned short *)
+&udph, iph->ihl * 4);
