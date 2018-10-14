@@ -1,5 +1,13 @@
-/* UDP PACKETS SHOULD FOLLOW THIS FOMART, Well in theory, i haven't tested
-this but it kinda makes sense */
+/* UDP PACKETS SHOULD FOLLOW
+THIS FOMART, Well in theory,
+i haven't tested
+this but it kinda makes sense,
+Fill ip header with IPPROTO_UDP
+and then on the same buff move
+it by 20 bytes and then populate
+the udp checksum then send buffer
+to the dest host and hopefully get
+a reply. Ok fuck me 😏*/
 
 struct iphdr	*iph;
 	struct udphdr	*udph;
