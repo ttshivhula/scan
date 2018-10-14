@@ -26,7 +26,7 @@ int main(int c, char **v)
 	dest.sin_addr.s_addr = dest_ip.s_addr;
 	int type = SYN;
 	int len = (type != UDP) ? sizeof(struct tcphdr) : sizeof(struct udphdr);
-	for (port = 1 ; port < 1000 ; port++)
+	for (port = 1 ; port < 100 ; port++)
 	{
 		memset(datagram, 0, 4096);
 		create_pkt(source_ip, dest, datagram, source_port, port, type);
@@ -53,7 +53,9 @@ void * receive_ack( void *ptr)
 	handle = pcap_open_live(dev, PKT_LEN, 0, 1000, errbuf);
 	pcap_compile(handle, &fp, filter_exp, 0, net);
 	pcap_setfilter(handle, &fp);
-	pcap_loop(handle, num_packets, recv_pkt, NULL);
+	//pcap_loop(handle, num_packets, recv_pkt, NULL);
+	int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
+	printf("num: %d\n", num);
 	pcap_freecode(&fp);
 	pcap_close(handle);
 }
