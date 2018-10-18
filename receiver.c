@@ -6,6 +6,7 @@ void recv_pkt(u_char *args, const struct pcap_pkthdr *header, const u_char *pkt)
 	struct  tcphdr	*tcph;
 	int		size_ip;
 	struct sockaddr_in source,dest;
+	struct servent *serv;
 
 	pkt += 14;
 	iph = (struct iphdr *)pkt;
@@ -19,6 +20,7 @@ void recv_pkt(u_char *args, const struct pcap_pkthdr *header, const u_char *pkt)
 		dest.sin_addr.s_addr = iph->daddr;
 		if(tcph->syn == 1 && tcph->ack == 1)
 		{
+			serv = getservbyport(80, "TCP");
 			printf("Port %d open \n" , ntohs(tcph->source));
 		}
 	}

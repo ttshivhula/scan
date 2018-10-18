@@ -16,6 +16,7 @@
 # include <sys/types.h>
 # include <ifaddrs.h>
 # include <pcap/pcap.h>
+# include <netdb.h>
 
 # define PKT_LEN 65536
 # define NUL 0x0
@@ -37,9 +38,21 @@ typedef struct	s_pseudo
 	struct tcphdr tcp;
 }		t_pseudo;
 
+typedef	struct			s_nmap
+{
+	int			type;
+	int			port;
+	char			source_ip[20];
+	char			*d_ip;
+	struct sockaddr_in	dest;
+	struct	in_addr		dest_ip;
+	int			source_port;
+	int			sock_fd;
+	char			dev[20]; //device used for monitoring //pcap craps
+}				t_nmap;
+
 char	*dstip;
 char	*srcip;
-struct	in_addr dest_ip;
 
 int				get_local(char *ip, char *device);
 void			exit_err(char *s);
