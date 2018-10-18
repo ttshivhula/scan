@@ -7,8 +7,7 @@ void	send_packet(t_nmap *nmap)
 
 	len = (nmap->type != UDP) ? sizeof(struct tcphdr) : sizeof(struct udphdr);
 	memset(datagram, 0, 4096);
-	create_pkt(nmap->source_ip, nmap->dest, datagram,
-		nmap->source_port, nmap->port, nmap->type);
+	create_pkt(nmap, datagram);
 	sendto(nmap->sock_fd, datagram , sizeof(struct iphdr) + len, 0,
 		(struct sockaddr *)&nmap->dest, sizeof(nmap->dest));
 }

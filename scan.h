@@ -59,7 +59,6 @@ void			exit_err(char *s);
 char			*dns_lookup(char *addr_host, struct sockaddr_in	*addr_con);
 unsigned short	csum(unsigned short *ptr,int nbytes);
 void 			recv_pkt(u_char *args, const struct pcap_pkthdr *header, const u_char *pkt);
-void    create_pkt(char *source_ip, struct sockaddr_in  dest, char *buff, int sport, int port, int type);
-void * receive_ack( void *ptr);
+void			create_pkt(t_nmap *p, char *buff);
 
 #endif
