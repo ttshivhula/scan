@@ -58,7 +58,11 @@ void		usage(void); // handles --help
 
 t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap);
 
+/*
+** Wrapper for argc/argv handling bundled into one
+*/
 
+t_nmap_setup	init_nmap(int argc, char **argv);
 
 
 

@@ -76,6 +76,18 @@ t_keyval	*cmd_options(int argc, char **argv)
 	return (cmd_args);
 }
 
+t_nmap_setup	init_nmap(int argc, char **argv)
+{
+	t_keyval	*key_value;
+	unsigned int	field;
+	t_nmap_setup	argc_argv;
+
+	key_value = cmd_options(argc, argv);
+	field = bitmap_check(key_value);
+	argc_argv = resolve_arguments(key_value, field);
+	return (argc_argv);
+}
+
 
 int	main(int argc, char **argv)
 {
