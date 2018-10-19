@@ -126,5 +126,6 @@ void			create_pkt(t_nmap *p, char *buff);
 /* changes by VHULA */
 void		add_ports(t_results **res, int port);
 void		open_port(t_results **res, int port, int type, int set);
+void		results(t_results *res);
 
 #endif

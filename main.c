@@ -60,11 +60,16 @@ void	send_packet(t_nmap *nmap)
 /* SYN ONLY JUST A TEST */
 void	results(t_results *res)
 {
+	struct servent *service;
+	char		name[4096];
+
 	while (res)
 	{
+		service = getservbyport(htons(res->port), NULL);
+		service ? strcpy(name, service->s_name) : strcpy(name, "Unassigned");
 		if (res->syn)
 		{
-			printf("Port %d is open\n", res->port);
+			printf("Port %d   %s  Open\n", res->port, name);
 		}
 		/*else
 			printf("Port %d is closed\n", res->port);*/
