@@ -1,5 +1,46 @@
 #include "scan.h"
 
+void	send_packet(t_nmap *);
+
+/*
+** basic thread handling
+*/
+
+void	*thread_function(void *arguments)
+{
+	t_nmap	*nmap;
+
+	nmap = arguments;
+	for (nmap->port = 1 ; nmap->port < 1000 ; nmap->port++)
+        {
+                char    errbuf[PCAP_ERRBUF_SIZE];
+                pcap_t  *handle;
+                handle = pcap_open_live(nmap->dev, PKT_LEN, 0, 10, errbuf);
+                send_packet(nmap);
+                int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
+                printf("num: %d %d\n", num, nmap->port);
+                pcap_close(handle);
+        }
+}
+
+void	threader(t_nmap *args) /*argument for --speedrun number */
+{
+	pthread_t	*thread_id;
+	int		i;
+
+	thread_id = (pthread_t *)malloc(sizeof(pthread_t) * 42);
+	/* 42 is just a test number */
+	i = 0;
+	while (i < 42)
+	{
+		pthread_create(&thread_id[i], NULL, thread_function,
+		(void*)args);
+		i++;
+	}
+	pthread_exit(NULL);
+}
+
+
 void	send_packet(t_nmap *nmap)
 {
 	int	len;
@@ -28,8 +69,8 @@ int main(int c, char **v)
 	nmap.dest.sin_family = AF_INET;
 	nmap.dest.sin_addr.s_addr = nmap.dest_ip.s_addr;
 	nmap.type = SYN;
-
-	for (nmap.port = 1 ; nmap.port < 1000 ; nmap.port++)
+	threader(&nmap);
+/*	for (nmap.port = 1 ; nmap.port < 1000 ; nmap.port++)
 	{
 		char	errbuf[PCAP_ERRBUF_SIZE];
 		pcap_t	*handle;
@@ -38,7 +79,7 @@ int main(int c, char **v)
 		int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
 		//printf("num: %d %d\n", num, port);
 		pcap_close(handle);
-	}
+	} */
 
 	return 0;
 }
