@@ -1,5 +1,5 @@
 
-#include "../scan.h"
+#include "scan.h"
 
 void		usage(void)
 {
@@ -75,7 +75,7 @@ t_keyval	*cmd_options(int argc, char **argv)
 	return (cmd_args);
 }
 
-
+/*
 int	main(int argc, char **argv)
 {
 	unsigned int field = 0;
@@ -92,5 +92,5 @@ int	main(int argc, char **argv)
 	if (field & HELP)
 		printf("help set\n");
 }
-
+*e
 

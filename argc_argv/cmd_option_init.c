@@ -1,6 +1,6 @@
 
 
-#include "../scan.h"
+#include "scan.h"
 
 /*
 ** If argc == 1, then ignore the creation of keyval 

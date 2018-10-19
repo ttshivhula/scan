@@ -22,8 +22,7 @@ char		*normalize_str(char *string)
 	{
 		if (whitespace_newline(string[i]))
 		{
-			newstring[j] = ' ';
-			j++;
+			newstring[j++] = ' ';
 			while (whitespace_newline(string[i]))
 				i++;
 		}
@@ -92,7 +91,7 @@ char	*multiple_file_list(char *params)
 	return (to_return);
 }
 
-char	**file_flag(char *param)
+char	**read_file(char *param)
 {
 	char	*file_cont;
 	char	**ip_list;
@@ -109,23 +108,6 @@ char	**file_flag(char *param)
 	ip_list = split(file_cont, ' ');
 	return (ip_list);
 }
-
-int	main(int argc, char **argv)
-{
-	char	*ipfile;
-	char	**files;
-	int	i;
-
-	i = 0;
-	files = file_flag(argv[1]);
-	while (files[i])
-	{
-		printf("line : %s\n", files[i]);
-		i++;
-	}
-	return (0);
-}
-
 
 
 
