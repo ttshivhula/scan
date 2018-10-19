@@ -49,6 +49,12 @@ typedef struct	s_arg
 	struct s_arg		*next;
 }		t_keyval;
 
+typedef struct	s_ip_port_list
+{
+	char	**ip_list;
+	char	**port_list;
+}		t_ip_port_list;
+
 t_keyval 	*key_value_pair(t_keyval *keyvalue, 
 		char *key, char *val);
 

@@ -6,6 +6,8 @@ void	send_packet(t_nmap *);
 ** basic thread handling
 */
 
+int	value42 = 42;
+
 void	*thread_function(void *arguments)
 {
 	t_nmap	*nmap;
@@ -18,10 +20,15 @@ void	*thread_function(void *arguments)
                 handle = pcap_open_live(nmap->dev, PKT_LEN, 0, 10, errbuf);
                 send_packet(nmap);
                 int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
-                printf("num: %d %d\n", num, nmap->port);
+          //     printf("num: %d %d\n", num, nmap->port);
                 pcap_close(handle);
         }
+	if (value42 == 1)
+		printf("haha\n");
+	else
+		value42--;
 }
+
 
 void	threader(t_nmap *args) /*argument for --speedrun number */
 {
@@ -35,6 +42,11 @@ void	threader(t_nmap *args) /*argument for --speedrun number */
 	{
 		pthread_create(&thread_id[i], NULL, thread_function,
 		(void*)args);
+		i++;
+	}
+	while (i < 42)
+	{
+		pthread_join(thread_id[i], NULL);
 		i++;
 	}
 	pthread_exit(NULL);
@@ -80,6 +92,6 @@ int main(int c, char **v)
 		//printf("num: %d %d\n", num, port);
 		pcap_close(handle);
 	} */
-
+	printf("EXITTING...\n");
 	return 0;
 }
