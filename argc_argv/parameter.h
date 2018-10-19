@@ -61,5 +61,4 @@ t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap);
 
 
 
-
 #endif

@@ -6,6 +6,27 @@
 ** If argc == 1, then ignore the creation of keyval 
 */
 
+void		destroy_keyval(t_keyval *key_value)
+{
+	t_keyval	*trav;
+
+	if (key_value->next == NULL)
+	{
+		free(key_value->option);
+		free(key_value->param);
+		free(key_value);
+		return ;
+	}
+	while (key_value)
+	{
+		trav = key_value;
+		key_value = key_value->next;
+		free(trav->option);
+		free(trav->param);
+		free(trav);
+	}
+}
+
 t_keyval	*new_keyval_pair(char *key, char *val)
 {
 	t_keyval	*newkey;
@@ -50,7 +71,6 @@ t_keyval 	*key_value_pair(t_keyval *keyvalue, char *key,
 	}
 	return (trav);
 }
-
 
 
 
