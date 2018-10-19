@@ -9,18 +9,22 @@ void	send_packet(t_nmap *);
 void	*thread_function(void *arguments)
 {
 	t_nmap	*nmap;
+	char	exp[40];
 
 	nmap = arguments;
 	for (nmap->port = 1 ; nmap->port < 1000 ; nmap->port++)
         {
                 char    errbuf[PCAP_ERRBUF_SIZE];
                 pcap_t  *handle;
-                handle = pcap_open_live(nmap->dev, PKT_LEN, 0, 10, errbuf);
+                handle = pcap_open_live(nmap->dev, PKT_LEN, 0, 1000, errbuf);
                 send_packet(nmap);
-                int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
-                printf("num: %d %d\n", num, nmap->port);
+                int num = pcap_dispatch(handle, 30, recv_pkt, (void *)nmap/*NULL*/);
+                //printf("num: %d %d\n", num, nmap->port);
                 pcap_close(handle);
         }
+	if (nmap->threads == 1)
+		results(nmap->results); //print results on final thread..
+	nmap->threads--;
 }
 
 void	threader(t_nmap *args) /*argument for --speedrun number */
@@ -53,6 +57,22 @@ void	send_packet(t_nmap *nmap)
 		(struct sockaddr *)&nmap->dest, sizeof(nmap->dest));
 }
 
+/* SYN ONLY JUST A TEST */
+void	results(t_results *res)
+{
+	while (res)
+	{
+		if (res->syn)
+		{
+			printf("Port %d is open\n", res->port);
+		}
+		/*else
+			printf("Port %d is closed\n", res->port);*/
+		
+		res = res->next;
+	}
+}
+
 int main(int c, char **v)
 {
 	t_nmap	nmap;
@@ -69,17 +89,13 @@ int main(int c, char **v)
 	nmap.dest.sin_family = AF_INET;
 	nmap.dest.sin_addr.s_addr = nmap.dest_ip.s_addr;
 	nmap.type = SYN;
-	threader(&nmap);
-/*	for (nmap.port = 1 ; nmap.port < 1000 ; nmap.port++)
+	nmap.threads = 42; // 42 total threads
+	nmap.results = NULL; //for obvious reasons.. SEGFAULT
+	/* add testing ports */
+	for (int k = 1000; k >= 1; k--)
 	{
-		char	errbuf[PCAP_ERRBUF_SIZE];
-		pcap_t	*handle;
-		handle = pcap_open_live(nmap.dev, PKT_LEN, 0, 10, errbuf);
-		send_packet(&nmap);
-		int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
-		//printf("num: %d %d\n", num, port);
-		pcap_close(handle);
-	} */
-
+		add_ports(&nmap.results, k);
+	}
+	threader(&nmap);
 	return 0;
 }
