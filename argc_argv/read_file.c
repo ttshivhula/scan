@@ -78,6 +78,7 @@ char	*multiple_file_list(char *params)
 	to_return = (char*)malloc(sizeof(char));
 	files = 0;
 	multiple_files = split(params, ',');
+	bzero(to_return, sizeof(char));
 	while (multiple_files[files])
 	{
 		file_content = read_ip_file(multiple_files[files]);

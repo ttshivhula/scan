@@ -24,6 +24,22 @@ void		init_nmap_setup(t_nmap_setup *argc_argv)
 	argc_argv->scan_bitmap = 0;
 }
 
+int		get_speedup_value(t_keyval *key_values)
+{
+	t_keyval	*trav;
+
+	trav = key_values;
+	while (trav)
+	{
+		if (strcmp(trav->option, "speedup") == 0)
+		{
+			return (read_speedrun(trav->params));
+		}
+		trav = trav->nexxt;
+	}
+	return (0);
+}
+
 char		**gather_values(t_keyval *key_values, 
 	char **(*func)(char *), char *to_find)
 {
@@ -47,8 +63,14 @@ char		**merge_ip_strings(char **ip_file, char **read_ip_cmd)
 		return (read_ip_cmd);
 	else if (ip_file && read_ip_cmd == NULL)
 		return (ip_file);
+	else if (ip_file == NULL && read_ip_cmd == NULL)
+		return (NULL);
 	else (arrayjoin(ip_file, read_ip_cmd));
 }
+
+/*
+** Dark arts is happening here...
+*/
 
 t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap)
 {
@@ -72,10 +94,9 @@ t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap)
 	if (bitmap & MFILE)
 		ip_file = gather_values(key_values, parser[1], "file");
 	if (bitmap & SPEEDRUN)
-	argc_argv.ip_list = merge_ip_string(ip_cmd, ip_file);
-
-
+		argc_argv.speedrun = read_s 
+	argc_argv.ip_list = merge_ip_strings(ip_file, ip_cmd);
+	printarray(argc_argv.ip_list);
 	printarray(argc_argv.port_list);
-	printarray(ip_cmd);
-	printarray(ip_file);
 }
+
