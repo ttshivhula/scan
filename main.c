@@ -2,6 +2,10 @@
 
 void	send_packet(t_nmap *);
 
+/*
+** basic thread handling
+*/
+
 void	*thread_function(void *arguments)
 {
 	t_nmap	*nmap;
