@@ -1,5 +1,4 @@
 
-#include "scan.h"
 #include "parameter.h"
 
 void		usage(void)
@@ -48,8 +47,7 @@ void		print_keyvalue_pair(t_keyval *keyval)
 	trav = keyval;
 	while (trav)
 	{
-		printf("K : %s - V : %s\n", trav->option,
-			trav->param);
+		printf("K : %s - V : %s\n", trav->option, trav->param);
 		trav = trav->next;
 	}
 }
@@ -63,8 +61,7 @@ t_keyval	*cmd_options(int argc, char **argv)
 	i = 1;
 	while (i < argc)
 	{
-		if (strncmp(argv[i], "--", 2) == 0 && 
-		i + 1 < argc)
+		if (strncmp(argv[i], "--", 2) == 0 &&  i + 1 < argc)
 		{
 			cmd_args = key_value_pair(cmd_args,
 			&argv[i][2], argv[i + 1]);

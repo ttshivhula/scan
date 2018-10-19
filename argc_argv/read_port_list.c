@@ -47,8 +47,8 @@ char		**multiple_ports(char *parameter)
 	while (listing[i])
 	{
 		if (strchr(listing[i], '-'))
-		to_return = arrayjoin(to_return, 
-		port_range_setup(listing[i]));
+			to_return = arrayjoin(to_return, 
+			port_range_setup(listing[i]));
 		else
 			to_return = arraypush(to_return, listing[i]);
 		i++;

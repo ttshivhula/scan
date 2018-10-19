@@ -1,5 +1,4 @@
 
-#include "scan.h"
 #include "parameter.h"
 
 /* print 2d array debug */
