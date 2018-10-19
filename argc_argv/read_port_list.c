@@ -1,6 +1,7 @@
 
 
 #include "parameter.h"
+#include <stdio.h>
 
 void		swap_numbers(size_t *start, size_t *end)
 {
@@ -26,7 +27,7 @@ char		**port_range_setup(char *start_to_end)
 		error_and_exit("Error : --ports : invalid range");
 	if (start > end)
 		swap_numbers(&start, &end);
-	while (start < end)
+	while (start < end + 1)
 	{
 		list = arraypush(list, intostr(start));
 		start++;	
@@ -46,8 +47,8 @@ char		**multiple_ports(char *parameter)
 	while (listing[i])
 	{
 		if (strchr(listing[i], '-'))
-			to_return = arraypush(to_return, 
-			&(port_range_setup(listing[i]));
+		to_return = arrayjoin(to_return, 
+		port_range_setup(listing[i]));
 		else
 			to_return = arraypush(to_return, listing[i]);
 		i++;
@@ -67,21 +68,17 @@ char		**single_ports(char *parameter)
 	}
 	else
 	{
-		tostr = intostr(parameter);
 		to_return = arraypush(to_return, tostr);
 	}
-	return (tostr);
+	return (to_return);
 }
 
 char		**port_list(char *parameter)
 {
-	char	*port_list;
 	char	**listing;
-	size_t	i;
 
-	i = 0;
 	listing = NULL;
-	if (count_params(parameter) > 1)
+	if (count_params(parameter, ',') > 1)
 	{
 		listing = multiple_ports(parameter);
 	}
@@ -89,10 +86,5 @@ char		**port_list(char *parameter)
 	{
 		listing = single_ports(parameter);
 	}
+	return (listing);
 }
-
-
-
-
-
-

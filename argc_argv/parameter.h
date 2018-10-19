@@ -22,4 +22,13 @@ void		error_and_exit(char *msg);
 
 char		*intostr(size_t size);
 
+/*
+** Merges 2 arrays into 1
+*/
+
+char		**arrayjoin(char **array1, char **array2);
+
+
+
+
 #endif
