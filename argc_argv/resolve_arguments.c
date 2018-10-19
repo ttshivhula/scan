@@ -24,6 +24,22 @@ void		init_nmap_setup(t_nmap_setup *argc_argv)
 	argc_argv->scan_bitmap = 0;
 }
 
+int		get_scan_value(t_keyval *key_values)
+{
+	t_keyval	*trav;
+
+	trav = key_values;
+	while (trav)
+	{
+		if (strcmp(trav->option, "scan") == 0)
+		{
+			return (read_scan_type(trav->param));
+		}
+		trav = trav->next;
+	}
+	return (0);
+}
+
 int		get_speedup_value(t_keyval *key_values)
 {
 	t_keyval	*trav;
@@ -33,9 +49,9 @@ int		get_speedup_value(t_keyval *key_values)
 	{
 		if (strcmp(trav->option, "speedup") == 0)
 		{
-			return (read_speedrun(trav->params));
+			return (read_speedrun(trav->param));
 		}
-		trav = trav->nexxt;
+		trav = trav->next;
 	}
 	return (0);
 }
@@ -94,9 +110,9 @@ t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap)
 	if (bitmap & MFILE)
 		ip_file = gather_values(key_values, parser[1], "file");
 	if (bitmap & SPEEDRUN)
-		argc_argv.speedrun = read_s 
+		argc_argv.speedup = get_speedup_value(key_values);
+	if (bitmap & SCAN)
+		argc_argv.scan_bitmap = get_scan_value(key_values);
 	argc_argv.ip_list = merge_ip_strings(ip_file, ip_cmd);
-	printarray(argc_argv.ip_list);
-	printarray(argc_argv.port_list);
 }
 

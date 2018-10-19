@@ -48,6 +48,7 @@ char		**arrayjoin(char **array1, char **array2);
 char		**read_file(char *param);  // handles --file
 char		**port_list(char *parameter); // handles --ports
 char		**read_ip_cmd(char *parameter); // handles --ip
+int             read_scan_type(char *param); // handles --scan
 int		read_speedrun(char *thread_count); // handles --speedup
 void		usage(void); // handles --help
 
