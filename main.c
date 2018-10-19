@@ -93,7 +93,7 @@ int main(int c, char **v)
 	setsockopt(nmap.sock_fd, IPPROTO_IP, IP_HDRINCL, val, sizeof(one));
 	nmap.dest.sin_family = AF_INET;
 	nmap.dest.sin_addr.s_addr = nmap.dest_ip.s_addr;
-	nmap.type = SYN;
+	nmap.type = NUL;
 	nmap.threads = 42; // 42 total threads
 	nmap.results = NULL; //for obvious reasons.. SEGFAULT
 	/* add testing ports */
