@@ -2,6 +2,7 @@
 #ifndef PARAMETER_H
 # define PARAMETER_H
 
+# include "scan.h"
 # include "alylibc/src/lib.h"
 
 /*
@@ -12,7 +13,7 @@ typedef struct	s_nmap_setup
 {
 	char	**ip_list;
 	char	**port_list;
-	size_t	speedup_number;
+	size_t	speedup;
 	int	scan_bitmap;
 }		t_nmap_setup;
 
@@ -54,9 +55,7 @@ void		usage(void); // handles --help
 ** Final resolution of all argc/argv parameters
 */ 
 
-t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap)
-
-
+t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap);
 
 
 

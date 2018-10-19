@@ -1,5 +1,6 @@
 
 #include "scan.h"
+#include "parameter.h"
 
 void		usage(void)
 {
@@ -75,7 +76,7 @@ t_keyval	*cmd_options(int argc, char **argv)
 	return (cmd_args);
 }
 
-/*
+
 int	main(int argc, char **argv)
 {
 	unsigned int field = 0;
@@ -83,14 +84,13 @@ int	main(int argc, char **argv)
 	t_keyval *key_value = cmd_options(argc, argv);
 	print_keyvalue_pair(key_value);
 	field = bitmap_check(key_value);
-	if (field & SPEEDRUN)
-		printf("speedurn set\n");
-	if (field & MFILE)
-		printf("mfile set\n");
-	if (field & IP)
-		printf("ip set\n");
-	if (field & HELP)
-		printf("help set\n");
+
+	/* Testing resolution */
+
+	t_nmap_setup		argc_argv;
+
+	argc_argv = resolve_arguments(key_value, field);
+
+
 }
-*e
 
