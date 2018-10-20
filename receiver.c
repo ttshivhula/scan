@@ -27,10 +27,7 @@ void		add_ports(t_results **res, int port)
 	*res = tmp;
 }
 
-/* Open  port by checking if a bitwise operator of a type of scan is set...
-*/
-
-void		open_port(t_results **res, int port, int type, int set)
+t_results   *get_port(t_results **res, int port)
 {
 	t_results *tmp;
 	
@@ -38,50 +35,117 @@ void		open_port(t_results **res, int port, int type, int set)
 	while (tmp)
 	{
 		if (tmp->port == port)
-		{
-			if (type == SYN)
-				tmp->syn = set;
-			if (type == ACK)
-				tmp->ack = set;
-			if (type == NUL)
-				tmp->nul = set;
-			if (type == FIN)
-				tmp->fin = set;
-			if (type == XMS)
-				tmp->xms = set;
-			if (type == UDP)
-				tmp->udp = set;
-			return ;
-		}
-		tmp = tmp->next;
+            return (tmp);
+        tmp = tmp->next;
 	}
+    return (NULL);
 }
 
-void recv_pkt(u_char *args, const struct pcap_pkthdr *header, const u_char *pkt)
+void    no_msg(void *pkt, t_scan *scan)
 {
-	struct	iphdr	*iph;
-	struct  tcphdr	*tcph;
-	int		size_ip;
-	struct sockaddr_in source,dest;
-	struct servent *serv;
-	t_nmap		*nmap;
+    t_results       *res;
+   
+    (void)pkt;
+    res = get_port(&scan->nmap->results, scan->port);
+    if (res)
+    {
+        if (scan->type == SYN)
+            res->syn = 3; //filtered
+        if (scan->type == ACK)
+            res->ack = 3; //filtered
+        if (scan->type == NUL)
+            res->ack = 5; //open-filtered
+        if (scan->type == FIN)
+            res->fin = 5; //open-filtered
+        if (scan->type == XMS)
+            res->xms = 5; //open-filtered
+        if (scan->type == UDP)
+            res->udp = 5; //open-filtered
+    }
+}
 
-	nmap = (t_nmap *)args;
-	pkt += 14;
-	iph = (struct iphdr *)pkt;
-	if(iph->protocol == IPPROTO_TCP)
-	{
-		size_ip = iph->ihl * 4;
-		tcph = (struct tcphdr *)(pkt +size_ip);
-		memset(&source, 0, sizeof(source));
-		source.sin_addr.s_addr = iph->saddr;
-		memset(&dest, 0, sizeof(dest));
-		dest.sin_addr.s_addr = iph->daddr;
-		if(tcph->syn == 1 && tcph->ack == 1)
-		{
-			//serv = getservbyport(80, "TCP");
-			//printf("Port %d open \n" , ntohs(tcph->source));
-			open_port(&nmap->results, ntohs(tcph->source), SYN, 1);
-		}
-	}
+void    udp_msg(void *pkt, t_scan *scan)
+{
+	struct udphdr	*udp;
+    t_results       *res;
+
+    udp = (struct udphdr *)pkt;
+    res = get_port(&scan->nmap->results, scan->port);
+    if (res)
+    {
+        if (scan->type == UDP)
+            res->udp = 1; //open
+    }
+}
+
+void    icmp_msg(void *pkt, t_scan *scan)
+{
+	struct icmphdr	*icmp;
+    t_results       *res;
+
+    icmp = (struct icmphdr *)pkt;
+    res = get_port(&scan->nmap->results, scan->port);
+    if (res)
+    {
+        if (scan->type == UDP && icmp->type == 3 && icmp->code == 3)
+            res->udp = 2; //closed
+        if (scan->type == UDP && icmp->type == 3 && icmp->code != 3)
+            res->udp = 3; //filtered
+        if (scan->type == SYN && icmp->type == 3)
+            res->syn = 3; //filtered
+        if (scan->type == NUL && icmp->type == 3)
+            res->nul = 3; //filtered
+        if (scan->type == ACK && icmp->type == 3)
+            res->ack = 3; //filtered
+        if (scan->type == XMS && icmp->type == 3)
+            res->xms = 3; //filtered
+    }
+}
+
+void    tcp_msg(void *pkt, t_scan *scan)
+{
+    struct tcphdr	*tcp;
+    t_results       *res;
+
+    tcp = (struct tcphdr *)pkt;
+    res = get_port(&scan->nmap->results, scan->port);
+    if (res)
+    {
+        if (scan->type == SYN)
+        {
+            if (tcp->ack == 1 && tcp->syn == 1)
+            {
+                res->syn = 1; //open
+                //printf("port %d open\n", scan->port);
+            }
+            if (tcp->ack == 1 && tcp->rst == 1)
+                res->syn = 2; //closed
+        }
+        if (scan->type == NUL && tcp->rst == 1)
+            res->nul = 2; //closed
+        if (scan->type == FIN && tcp->rst == 1)
+            res->fin = 2; //closed
+        if (scan->type == XMS && tcp->rst == 1)
+            res->xms = 2; //closed
+        if (scan->type == ACK && tcp->rst == 1)
+            res->ack = 4; //unfiltered
+    }
+}
+
+void    recv_pkt(u_char *args, const struct pcap_pkthdr *header, const u_char *pkt)
+{
+    struct ip       *ip;
+    t_scan          *scan;
+    static  int num = 1;
+
+    pkt += 14;
+    ip = (struct ip *)pkt;
+    scan = (t_scan *)args;
+    //printf("PKT RECEIVED: %d\n", num++);
+    if (ip->ip_p == IPPROTO_UDP)
+        udp_msg((unsigned char *)pkt + sizeof(struct ip), scan);
+    if (ip->ip_p == IPPROTO_TCP)
+        tcp_msg((unsigned char *)pkt + sizeof(struct ip), scan);
+    if (ip->ip_p == IPPROTO_ICMP)
+        icmp_msg((unsigned char *)pkt + sizeof(struct ip), scan);
 }

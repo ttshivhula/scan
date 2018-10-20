@@ -12,6 +12,7 @@
 # include <unistd.h>
 # include <netinet/tcp.h>
 # include <netinet/udp.h>
+# include <netinet/ip_icmp.h>
 # include <netinet/ip.h>
 # include <sys/types.h>
 # include <ifaddrs.h>
@@ -113,8 +114,12 @@ typedef	struct			s_nmap
 	t_results		*results;
 }				t_nmap;
 
-char	*dstip;
-char	*srcip;
+typedef struct      s_scan
+{
+    int             port;
+    int             type;
+    t_nmap          *nmap;
+}                   t_scan;
 
 int				get_local(char *ip, char *device);
 void			exit_err(char *s);
@@ -127,5 +132,6 @@ void			create_pkt(t_nmap *p, char *buff);
 void		add_ports(t_results **res, int port);
 void		open_port(t_results **res, int port, int type, int set);
 void		results(t_results *res);
+void        no_msg(void *pkt, t_scan *scan);
 
 #endif
