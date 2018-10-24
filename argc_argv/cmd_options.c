@@ -86,7 +86,7 @@ t_nmap_setup	init_nmap(int argc, char **argv)
 }
 
 
-int	main(int argc, char **argv)
+/*int	main(int argc, char **argv)
 {
 	unsigned int field = 0;
 
@@ -94,12 +94,11 @@ int	main(int argc, char **argv)
 	print_keyvalue_pair(key_value);
 	field = bitmap_check(key_value);
 
-	/* Testing resolution */
 
 	t_nmap_setup		argc_argv;
 
 	argc_argv = resolve_arguments(key_value, field);
 
 
-}
+}*/
 

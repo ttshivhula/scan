@@ -6,8 +6,6 @@ void	send_packet(t_nmap *);
 ** basic thread handling
 */
 
-int	value42 = 42;
-
 void	*thread_function(void *arguments)
 {
 	t_nmap	*nmap;
@@ -33,32 +31,16 @@ void	*thread_function(void *arguments)
                 pcap_compile(handle, &fp, filter_exp, 0, net);
                 pcap_setfilter(handle, &fp);
                 send_packet(nmap);
-<<<<<<< HEAD
-                int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
-          //     printf("num: %d %d\n", num, nmap->port);
-||||||| merged common ancestors
-                int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
-                printf("num: %d %d\n", num, nmap->port);
-=======
                 int num = pcap_dispatch(handle, 10, recv_pkt, (void *)&scan);
                 if (num == 0)
                     no_msg(NULL, &scan);
                 printf("num: %d %d\n", num, nmap->port);
 		        pcap_freecode(&fp);
->>>>>>> ip-report
                 pcap_close(handle);
         }
-<<<<<<< HEAD
-	if (value42 == 1)
-		printf("haha\n");
-	else
-		value42--;
-||||||| merged common ancestors
-=======
 	if (nmap->threads == 1)
 		results(nmap->results); //print results on final thread..
 	nmap->threads--;
->>>>>>> ip-report
 }
 
 
@@ -118,14 +100,24 @@ void	results(t_results *res)
 	}
 }
 
-int main(int c, char **v)
+int main(int argc, char **argv)
 {
 	t_nmap	nmap;
 	int one = 1;
 	const int *val = &one;
+	unsigned int field = 0;
 	
+    t_keyval *key_value = cmd_options(argc, argv);
+    printf("here\n");
+	//print_keyvalue_pair(key_value);
+    printf("here\n");
+	//field = bitmap_check(key_value);
+	t_nmap_setup		argc_argv;
+	argc_argv = resolve_arguments(key_value, field);
+    printf("here\n");
+    printf("ip: %s port: %s\n", argc_argv.ip_list[0], /*argc_argv.port_list[0]*/NULL);	
 	nmap.sock_fd = socket (AF_INET, SOCK_RAW , IPPROTO_RAW);
-	nmap.d_ip = dns_lookup(v[1], &nmap.dest);
+	nmap.d_ip = dns_lookup(argc_argv.ip_list[0], &nmap.dest);
 	nmap.source_port = 43591;
 	get_local(nmap.source_ip, nmap.dev);
 	nmap.dest_ip.s_addr = inet_addr(nmap.d_ip); 
@@ -137,32 +129,9 @@ int main(int c, char **v)
 	nmap.threads = 1; // 42 total threads
 	nmap.results = NULL; //for obvious reasons.. SEGFAULT
 	/* add testing ports */
-	for (int k = 1000; k >= 1; k--)
-	{
-<<<<<<< HEAD
-		char	errbuf[PCAP_ERRBUF_SIZE];
-		pcap_t	*handle;
-		handle = pcap_open_live(nmap.dev, PKT_LEN, 0, 10, errbuf);
-		send_packet(&nmap);
-		int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
-		//printf("num: %d %d\n", num, port);
-		pcap_close(handle);
-	} */
-	printf("EXITTING...\n");
-||||||| merged common ancestors
-		char	errbuf[PCAP_ERRBUF_SIZE];
-		pcap_t	*handle;
-		handle = pcap_open_live(nmap.dev, PKT_LEN, 0, 10, errbuf);
-		send_packet(&nmap);
-		int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
-		//printf("num: %d %d\n", num, port);
-		pcap_close(handle);
-	} */
-
-=======
-		add_ports(&nmap.results, k);
-	}
+    int k = -1;
+    while (argc_argv.port_list[++k])
+		add_ports(&nmap.results, atoi(argc_argv.port_list[k]));
 	threader(&nmap);
->>>>>>> ip-report
 	return 0;
 }

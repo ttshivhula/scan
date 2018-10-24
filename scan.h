@@ -19,6 +19,8 @@
 # include <pcap/pcap.h>
 # include <netdb.h>
 
+#include "argc_argv/parameter.h"
+
 /*
 ** Using bitmap for identifying the types of scan needed
 */
@@ -36,44 +38,43 @@
 ** bitmap values for coordinating flag assignment
 */
 
-# define HELP		1
+/*# define HELP		1
 # define PORTS		2
 # define IP		4
 # define MFILE		8
 # define SPEEDRUN	16
 # define SCAN		32
 
-/*
 **  hash table for command line argument handling
 */
 
-typedef struct	s_arg
+/*typedef struct	s_arg
 {
 	char			*option;
 	char			*param;
 	struct s_arg		*next;
 }		t_keyval;
-
-typedef struct	s_ip_port_list
+*/
+/*typedef struct	s_ip_port_list
 {
 	char	**ip_list;
 	char	**port_list;
 }		t_ip_port_list;
-
-t_keyval 	*key_value_pair(t_keyval *keyvalue, 
-		char *key, char *val);
+*/
+//t_keyval 	*key_value_pair(t_keyval *keyvalue, 
+//		char *key, char *val);
 
 /*
 ** Help screen.
 */
 
-void		usage(void);
+//void		usage(void);
 
 /*
 ** basic cmd error message and exit command.
 */
 
-void		error_and_exit(char *msg);
+//void		error_and_exit(char *msg);
 
 /*
 *****
