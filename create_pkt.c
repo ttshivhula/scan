@@ -21,6 +21,8 @@ void    ip_header(t_nmap *p, char *buff)
 	iph->check = csum((unsigned short *)buff, iph->tot_len >> 1);
 }
 
+/* Added all types of required scans */
+
 void    tcp_header(t_nmap *p, char *buff)
 {
 	struct tcphdr *tcph;
@@ -31,11 +33,13 @@ void    tcp_header(t_nmap *p, char *buff)
 	tcph->ack_seq = 0;
 	tcph->doff = sizeof(struct tcphdr) / 4;      //Size of tcp header
 	tcph->fin = (p->type == FIN) ? 1 : 0;
+	if (p->type == XMS)
+		tcph->fin == 1;
 	tcph->syn = (p->type == SYN) ? 1 : 0;
 	tcph->rst = 0;
-	tcph->psh = 0;
+	tcph->psh = (p->type == XMS) ? 1 : 0;
 	tcph->ack = (p->type == ACK) ? 1 : 0;
-	tcph->urg = 0;
+	tcph->urg = (p->type == XMS) ? 1 : 0;
 	tcph->window = htons (14600);  // maximum allowed window size
 	tcph->check = 0;
 	tcph->urg_ptr = 0;

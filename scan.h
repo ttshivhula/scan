@@ -12,20 +12,25 @@
 # include <unistd.h>
 # include <netinet/tcp.h>
 # include <netinet/udp.h>
+# include <netinet/ip_icmp.h>
 # include <netinet/ip.h>
 # include <sys/types.h>
 # include <ifaddrs.h>
 # include <pcap/pcap.h>
 # include <netdb.h>
 
+/*
+** Using bitmap for identifying the types of scan needed
+*/
+
 # define PKT_LEN	65536
-# define NUL 		0x0
-# define SYN 		0x1
-# define ACK 		0x2
-# define FIN 		0x3
-# define UDP 		0x4
-# define XMS 		0x5
-# define ALL 		0x6
+# define NUL 		0x1
+# define SYN 		0x2
+# define ACK 		0x4
+# define FIN 		0x8
+# define UDP 		0x10
+# define XMS 		0x20
+# define ALL 		(NUL|SYN|ACK|FIN|UDP|XMS)
 
 /*
 ** bitmap values for coordinating flag assignment
@@ -85,9 +90,24 @@ typedef struct	s_pseudo
 	struct tcphdr tcp;
 }		t_pseudo;
 
+// holds the results of all ports scanned... Do we fucken need a linked list though ?
+typedef	struct	s_results
+{
+	int	port;
+	int	syn;
+	int	xms;
+	int	udp;
+	int	nul;
+	int	ack;
+	int	fin;
+	char	s_name[40];
+	char	res[20];
+	struct s_results *next;
+}		t_results;
+
 typedef	struct			s_nmap
 {
-
+	int			threads;
 	int			type;
 	int			port;
 	char			source_ip[20];
@@ -97,10 +117,15 @@ typedef	struct			s_nmap
 	int			source_port;
 	int			sock_fd;
 	char			dev[20]; //device used for monitoring //pcap craps
+	t_results		*results;
 }				t_nmap;
 
-char	*dstip;
-char	*srcip;
+typedef struct      s_scan
+{
+    int             port;
+    int             type;
+    t_nmap          *nmap;
+}                   t_scan;
 
 int				get_local(char *ip, char *device);
 void			exit_err(char *s);
@@ -108,5 +133,11 @@ char			*dns_lookup(char *addr_host, struct sockaddr_in	*addr_con);
 unsigned short	csum(unsigned short *ptr,int nbytes);
 void 			recv_pkt(u_char *args, const struct pcap_pkthdr *header, const u_char *pkt);
 void			create_pkt(t_nmap *p, char *buff);
+
+/* changes by VHULA */
+void		add_ports(t_results **res, int port);
+void		open_port(t_results **res, int port, int type, int set);
+void		results(t_results *res);
+void        no_msg(void *pkt, t_scan *scan);
 
 #endif

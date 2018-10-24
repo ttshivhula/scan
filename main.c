@@ -11,22 +11,54 @@ int	value42 = 42;
 void	*thread_function(void *arguments)
 {
 	t_nmap	*nmap;
+	char	exp[40];
 
 	nmap = arguments;
-	for (nmap->port = 1 ; nmap->port < 1000 ; nmap->port++)
+	for (nmap->port = 20 ; nmap->port < 81 ; nmap->port++)
         {
                 char    errbuf[PCAP_ERRBUF_SIZE];
                 pcap_t  *handle;
-                handle = pcap_open_live(nmap->dev, PKT_LEN, 0, 10, errbuf);
+	            bpf_u_int32			mask;
+                bpf_u_int32			net;
+	            char				filter_exp[1024];
+	            struct bpf_program	fp;
+                t_scan  scan;
+	            sprintf(filter_exp, "src host %s and src port %d and dst host %s", nmap->d_ip, nmap->port, nmap->source_ip);
+                
+                scan.port = nmap->port;
+                scan.type = nmap->type;
+                scan.nmap = nmap;
+                handle = pcap_open_live(nmap->dev, PKT_LEN, 1, 1000, errbuf);
+                pcap_lookupnet(nmap->dev, &net, &mask, errbuf);
+                pcap_compile(handle, &fp, filter_exp, 0, net);
+                pcap_setfilter(handle, &fp);
                 send_packet(nmap);
+<<<<<<< HEAD
                 int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
           //     printf("num: %d %d\n", num, nmap->port);
+||||||| merged common ancestors
+                int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
+                printf("num: %d %d\n", num, nmap->port);
+=======
+                int num = pcap_dispatch(handle, 10, recv_pkt, (void *)&scan);
+                if (num == 0)
+                    no_msg(NULL, &scan);
+                printf("num: %d %d\n", num, nmap->port);
+		        pcap_freecode(&fp);
+>>>>>>> ip-report
                 pcap_close(handle);
         }
+<<<<<<< HEAD
 	if (value42 == 1)
 		printf("haha\n");
 	else
 		value42--;
+||||||| merged common ancestors
+=======
+	if (nmap->threads == 1)
+		results(nmap->results); //print results on final thread..
+	nmap->threads--;
+>>>>>>> ip-report
 }
 
 
@@ -38,7 +70,7 @@ void	threader(t_nmap *args) /*argument for --speedrun number */
 	thread_id = (pthread_t *)malloc(sizeof(pthread_t) * 42);
 	/* 42 is just a test number */
 	i = 0;
-	while (i < 42)
+	while (i < 1)
 	{
 		pthread_create(&thread_id[i], NULL, thread_function,
 		(void*)args);
@@ -65,6 +97,27 @@ void	send_packet(t_nmap *nmap)
 		(struct sockaddr *)&nmap->dest, sizeof(nmap->dest));
 }
 
+/* SYN ONLY JUST A TEST */
+void	results(t_results *res)
+{
+	struct servent *service;
+	char		name[4096];
+
+	while (res)
+	{
+		service = getservbyport(htons(res->port), NULL);
+		service ? strcpy(name, service->s_name) : strcpy(name, "Unassigned");
+		if (res->syn == 1)
+		{
+			printf("Port %d   %s  Open\n", res->port, name);
+		}
+		/*else
+			printf("Port %d is closed\n", res->port);*/
+		
+		res = res->next;
+	}
+}
+
 int main(int c, char **v)
 {
 	t_nmap	nmap;
@@ -81,9 +134,12 @@ int main(int c, char **v)
 	nmap.dest.sin_family = AF_INET;
 	nmap.dest.sin_addr.s_addr = nmap.dest_ip.s_addr;
 	nmap.type = SYN;
-	threader(&nmap);
-/*	for (nmap.port = 1 ; nmap.port < 1000 ; nmap.port++)
+	nmap.threads = 1; // 42 total threads
+	nmap.results = NULL; //for obvious reasons.. SEGFAULT
+	/* add testing ports */
+	for (int k = 1000; k >= 1; k--)
 	{
+<<<<<<< HEAD
 		char	errbuf[PCAP_ERRBUF_SIZE];
 		pcap_t	*handle;
 		handle = pcap_open_live(nmap.dev, PKT_LEN, 0, 10, errbuf);
@@ -93,5 +149,20 @@ int main(int c, char **v)
 		pcap_close(handle);
 	} */
 	printf("EXITTING...\n");
+||||||| merged common ancestors
+		char	errbuf[PCAP_ERRBUF_SIZE];
+		pcap_t	*handle;
+		handle = pcap_open_live(nmap.dev, PKT_LEN, 0, 10, errbuf);
+		send_packet(&nmap);
+		int num = pcap_dispatch(handle, -1, recv_pkt, NULL);
+		//printf("num: %d %d\n", num, port);
+		pcap_close(handle);
+	} */
+
+=======
+		add_ports(&nmap.results, k);
+	}
+	threader(&nmap);
+>>>>>>> ip-report
 	return 0;
 }
