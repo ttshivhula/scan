@@ -86,7 +86,34 @@ t_nmap_setup	init_nmap(int argc, char **argv)
 }
 
 
-/*int	main(int argc, char **argv)
+/* test print */
+
+void	dump_acav(t_nmap_setup argc_argv)
+{
+	size_t		i = 0;
+
+	if (argc_argv.ip_list)
+	{
+		while (argc_argv.ip_list[i])
+		{
+			printf("IP : %s\n", argc_argv.ip_list[i]);
+			i++;
+		}
+	}
+	if (argc_argv.port_list)
+	{
+		i = 0;
+		while (argc_argv.port_list[i])
+		{
+			printf("PORT : %s\n", argc_argv.port_list[i]);
+			i++;
+		}
+	}
+	printf("SCAN LIST : %d\n", argc_argv.speedup);
+	printf("SPEEDUP : %d\n", argc_argv.scan_bitmap);
+}
+
+int	main(int argc, char **argv)
 {
 	unsigned int field = 0;
 
@@ -98,7 +125,6 @@ t_nmap_setup	init_nmap(int argc, char **argv)
 	t_nmap_setup		argc_argv;
 
 	argc_argv = resolve_arguments(key_value, field);
+	dump_acav(argc_argv);
 
-
-}*/
-
+}

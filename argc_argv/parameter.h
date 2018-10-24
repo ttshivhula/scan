@@ -3,11 +3,10 @@
 # define PARAMETER_H
 
 # include "alylibc/src/lib.h"
-# include "../scan.h"
 # include <stdio.h>
 # include <string.h>
 
-/*# define PKT_LEN	65536
+# define PKT_LEN	65536
 # define NUL 		0x0
 # define SYN 		0x1
 # define ACK 		0x2
@@ -15,7 +14,6 @@
 # define UDP 		0x4
 # define XMS 		0x5
 # define ALL 		0x6
-*/
 
 
 /*

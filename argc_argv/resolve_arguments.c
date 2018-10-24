@@ -113,5 +113,6 @@ t_nmap_setup	resolve_arguments(t_keyval *key_values, int bitmap)
 	if (bitmap & SCAN)
 		argc_argv.scan_bitmap = get_scan_value(key_values);
 	argc_argv.ip_list = merge_ip_strings(ip_file, ip_cmd);
+	return (argc_argv);
 }
 
